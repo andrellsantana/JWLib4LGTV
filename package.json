@@ -1,0 +1,27 @@
+{
+  "name": "jwlv4lgtvwebos",
+  "private": true,
+  "version": "0.1.0",
+  "description": "JW Vídeos para TV LG webOS",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && cp webos/appinfo.json webos/icon.png webos/largeIcon.png webos/splash.png dist/",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/sora": "^5.1.0",
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.9.1",
+    "@vitejs/plugin-legacy": "^5.4.3",
+    "jsdom": "^25.0.1",
+    "terser": "^5.36.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
+  }
+}

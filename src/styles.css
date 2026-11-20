@@ -1,0 +1,387 @@
+/*
+ * Tela fixa de 1920×1080 (resolução lógica dos apps webOS na LG 43UN7300).
+ * Compatível com Chromium 68: sem `inset`, sem `gap` em flexbox (usa margens).
+ */
+:root {
+  --ink: #010b2e;
+  --line: rgba(255, 255, 255, 0.14);
+  --text: #eef2f6;
+  --muted: #a9b8cc;
+  --accent: #5aa9e6;
+  --new: #f2b84b;
+  --display: 'Sora', 'LG Smart UI', sans-serif;
+  --body: 'Inter', 'LG Smart UI', sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--text);
+  font-family: var(--body);
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--ink);
+  transform-origin: 0 0;
+}
+
+/* ---------- fundo ---------- */
+.bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bg-plain {
+  background: radial-gradient(ellipse at 45% 20%, #0a2358 0%, #011844 45%, #010b2e 100%);
+}
+.scrim {
+  background: linear-gradient(90deg, rgba(1, 8, 30, 0.92) 0%, rgba(1, 8, 30, 0.55) 45%, rgba(1, 8, 30, 0.3) 100%),
+    linear-gradient(0deg, rgba(1, 8, 30, 0.9) 0%, rgba(1, 8, 30, 0) 55%);
+}
+
+/* ---------- trilho ---------- */
+.rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 168px;
+  padding-top: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+}
+.logo {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 26px;
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 40px;
+}
+.logo small {
+  display: block;
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+.nav {
+  width: 120px;
+  height: 96px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 19px;
+  cursor: pointer;
+}
+.nav svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 6px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+.nav.on {
+  color: var(--text);
+}
+
+/* ---------- foco ---------- */
+[data-f] {
+  outline: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.card.focus,
+.btn.focus {
+  box-shadow: 0 0 0 5px var(--text), 0 12px 40px rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+  position: relative;
+  z-index: 2;
+}
+.nav.focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px var(--text);
+}
+
+/* ---------- telas ---------- */
+.screen {
+  position: absolute;
+  left: 168px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.scroller {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 54px 96px 160px 32px;
+  transition: transform 0.25s ease;
+}
+.hero {
+  height: 470px;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 28px;
+}
+.eyebrow {
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--new);
+  font-weight: 600;
+}
+.hero h1,
+.detail h1 {
+  font-family: var(--display);
+  font-size: 64px;
+  line-height: 1.08;
+  margin: 14px 0;
+}
+.meta {
+  color: var(--muted);
+  font-size: 24px;
+}
+.meta span + span {
+  margin-left: 20px;
+}
+.btns {
+  display: flex;
+  margin-top: 30px;
+}
+.btns .btn + .btn {
+  margin-left: 18px;
+}
+.btn {
+  height: 68px;
+  padding: 0 34px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  display: inline-flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+  border: 0;
+  font-family: var(--body);
+}
+.btn.primary {
+  background: var(--text);
+  color: var(--ink);
+}
+
+/* ---------- fileiras e cards ---------- */
+.row {
+  margin-top: 34px;
+}
+.row h2 {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+.row h2 span {
+  font-family: var(--body);
+  font-size: 20px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-left: 16px;
+}
+.row.studio h2 {
+  color: var(--accent);
+}
+.track {
+  display: flex;
+  transition: transform 0.2s ease;
+}
+.card {
+  flex: none;
+  width: 352px;
+  margin-right: 24px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.thumb {
+  position: relative;
+  height: 198px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #13213f;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dur {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.72);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 18px;
+}
+.badge {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  background: var(--new);
+  color: #1a1200;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+.badge.blue {
+  background: var(--accent);
+  color: #04121f;
+}
+.ct {
+  font-size: 21px;
+  line-height: 1.3;
+  margin-top: 12px;
+  height: 56px;
+  overflow: hidden;
+}
+.cs {
+  font-size: 17px;
+  color: var(--muted);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- páginas ---------- */
+.page h1 {
+  font-family: var(--display);
+  font-size: 52px;
+  margin: 0 0 12px;
+}
+.page .lead {
+  font-size: 24px;
+  color: var(--muted);
+  max-width: 1200px;
+  margin: 0 0 8px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 352px);
+  grid-gap: 34px 24px;
+  margin-top: 28px;
+}
+.grid .card {
+  margin-right: 0;
+}
+
+/* ---------- detalhe ---------- */
+.detail {
+  background: var(--ink);
+  padding: 140px 160px 0 240px;
+}
+.detail-art {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1240px;
+  height: 698px;
+  object-fit: cover;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%), linear-gradient(0deg, transparent 0%, #000 35%);
+  -webkit-mask-composite: source-in;
+}
+.detail h1 {
+  font-size: 56px;
+  max-width: 1000px;
+  max-height: 186px;
+  overflow: hidden;
+}
+.detail .content {
+  position: relative;
+  max-width: 1200px;
+}
+.detail p {
+  font-size: 26px;
+  color: var(--muted);
+  max-width: 1000px;
+  line-height: 1.5;
+}
+
+/* ---------- avisos e diálogos ---------- */
+.status {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 30px;
+  color: var(--muted);
+}
+.status .btn {
+  margin-top: 30px;
+}
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 600;
+  padding: 16px 30px;
+  border-radius: 12px;
+  z-index: 60;
+}
+.dialog-bg {
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 40;
+}
+.dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 640px;
+  background: #0c1b3f;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 36px;
+}
+.dialog h3 {
+  font-family: var(--display);
+  font-size: 32px;
+  margin: 0 0 24px;
+}

@@ -100,3 +100,19 @@ export async function fetchLatest(lang: string): Promise<Video[]> {
   const { category } = await getJson('LatestVideos', lang);
   return (category.media || []).map((m) => toVideo(m, { key: 'LatestVideos', name: category.name }, category.name));
 }
+
+/** Um vídeo em outro idioma (para trocar o áudio ou buscar legendas). */
+export async function fetchMediaItem(lang: string, langAgnosticId: string, base: Video): Promise<Video | null> {
+  const res = await fetch(`${API}/media-items/${lang}/${langAgnosticId}?clientType=www`);
+  if (!res.ok) return null;
+  const data = (await res.json()) as { media?: RawMedia[] };
+  const m = data.media?.[0];
+  return m ? toVideo(m, { key: base.categoryKey, name: base.category }, base.subcategory) : null;
+}
+
+/** Escolhe o arquivo na qualidade pedida ou a mais próxima abaixo dela. */
+export function pickFile(v: Video, quality: string): VideoFile | undefined {
+  const want = parseInt(quality, 10);
+  const below = v.files.filter((f) => f.height <= want);
+  return below.length ? below[below.length - 1] : v.files[0];
+}

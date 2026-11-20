@@ -5,13 +5,17 @@ App para TVs LG com webOS que lista e reproduz os vídeos do JW.org, em portugu�
 
 > Em construção. O passo a passo completo de instalação na TV será escrito ao final do projeto.
 
-## Estado atual (etapa 1 de 5)
+## Estado atual (etapa 2 de 5)
 
 - Catálogo de vídeos lido da API pública do JW.org (todas as categorias, Novidades dos últimos 30 dias)
 - Tela inicial: destaque, Novidades, "De Nosso Estúdio", uma fileira por categoria
 - Categorias, página de categoria e detalhes do vídeo
 - Navegação por controle remoto (setas, OK, Voltar), ponteiro do Magic Remote e rodinha
 - Cache do catálogo na TV: abre na hora e atualiza em segundo plano
+- Player: pausa, avançar/voltar 10 s, botões de mídia do controle, qualidade (padrão 720p), legendas em vários idiomas com tamanho ajustável, troca do idioma do vídeo
+- Minha lista: Favoritos e Continuar assistindo (segure OK sobre um vídeo para remover)
+- Ao abrir, oferece continuar o último vídeo interrompido
+- Ajustes: qualidade, legendas, tamanho da legenda, idioma, fundo de tela (imagem, trocar, remover)
 
 ## Desenvolvimento
 
@@ -36,3 +40,19 @@ Teclas no computador: setas, Enter = OK, Esc = Voltar.
 | `src/lib` | Utilitários: textos, datas, armazenamento |
 | `webos` | `appinfo.json`, ícones e tela de abertura do app webOS |
 | `tests` | Testes (Vitest) |
+
+## Instalação na TV (versão preliminar)
+
+O guia completo, passo a passo, será escrito na etapa 5. Por enquanto:
+
+1. Na TV, ative o **Developer Mode** (app "Developer Mode" da LG Content Store, entrando com sua conta de desenvolvedor LG) e ligue **Key Server**. Anote o IP da TV e a *passphrase* mostrados no app.
+2. No Mac, com o Node.js instalado, dentro da pasta do projeto:
+
+```bash
+npm install
+TV_IP=192.168.0.25 npm run tv:add
+npm run tv:key
+npm run tv
+```
+
+`tv:key` pede a *passphrase* da TV. `tv` gera o pacote, instala e abre o app.

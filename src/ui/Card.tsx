@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Video } from '../api/types';
 import { isNew } from '../lib/text';
+import { getProgress } from '../lib/prefs';
 
 /* Carrega a miniatura só quando o card chega perto da área visível (economiza rede e memória da TV). */
 let observer: IntersectionObserver | null = null;
@@ -37,12 +38,18 @@ export function Card({ video, fid, subtitle, onOpen }: Props) {
   useEffect(() => {
     if (ref.current) watch(ref.current, () => setShow(true));
   }, []);
+  const pr = getProgress(video.id);
   return (
-    <div class="card" data-f={fid} ref={ref} onClick={() => onOpen(video)}>
+    <div class="card" data-f={fid} data-video={video.id} ref={ref} onClick={() => onOpen(video)}>
       <div class="thumb">
         {show && video.thumb ? <img src={video.thumb} alt="" /> : null}
         {isNew(video) ? <div class="badge">NOVO</div> : null}
         {video.durationText ? <div class="dur">{video.durationText}</div> : null}
+        {pr ? (
+          <div class="prog">
+            <i style={{ width: `${Math.round((pr.t / pr.d) * 100)}%` }} />
+          </div>
+        ) : null}
       </div>
       <div class="ct">{video.title}</div>
       <div class="cs">{subtitle ?? video.subcategory}</div>

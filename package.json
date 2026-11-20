@@ -1,0 +1,30 @@
+{
+  "name": "jwlv4lgtvwebos",
+  "private": true,
+  "version": "1.0.0",
+  "description": "JW Vídeos para TV LG webOS",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && node scripts/package.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "tv:add": "ares-setup-device --add tv -i \"{'host':'$TV_IP','port':'9922','username':'prisoner'}\"",
+    "tv:key": "ares-novacom --device tv --getkey",
+    "tv": "npm run build && rm -rf ipk && ares-package dist/tv -o ipk && ares-install --device tv ipk/*.ipk && ares-launch --device tv com.jwlv4lgtvwebos.app",
+    "tv:token": "ares-novacom --device tv --run \"cat /var/luna/preferences/devmode_enabled\""
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/sora": "^5.1.0",
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.9.1",
+    "@webos-tools/cli": "^3.2.6",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
+  }
+}

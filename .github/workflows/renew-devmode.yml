@@ -1,0 +1,48 @@
+# Renova a sessão do Developer Mode da TV LG a cada 12 horas (RI01–RI03),
+# para o app nunca ser removido por expiração.
+# Segredo necessário: LG_DEV_SESSION_TOKEN (ver README).
+name: Renovar Developer Mode da TV
+
+on:
+  schedule:
+    - cron: '17 */12 * * *'
+    # Uma vez por mês: mantém os agendamentos ativos (RI02).
+    - cron: '41 9 3 * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Renovar sessão na LG
+        env:
+          TOKEN: ${{ secrets.LG_DEV_SESSION_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Segredo LG_DEV_SESSION_TOKEN não configurado (veja o README)."
+            exit 1
+          fi
+          RESP=$(curl -fsS --retry 3 --retry-delay 10 \
+            "https://developer.lge.com/secure/ResetDevModeSession.dev?sessionToken=${TOKEN}")
+          echo "Resposta da LG: $RESP"
+          echo "$RESP" | grep -qi '"result" *: *"success"' || {
+            echo "::error::A LG não confirmou a renovação. O token pode ter mudado: gere de novo com 'npm run tv:token'."
+            exit 1
+          }
+
+  keepalive:
+    # O GitHub desliga agendamentos de repositórios sem atividade por 60 dias.
+    # Reativar os workflows pela API reinicia essa contagem, sem criar commits.
+    if: github.event.schedule == '41 9 3 * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manter agendamentos ativos
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X PUT "repos/${{ github.repository }}/actions/workflows/renew-devmode.yml/enable"
+          echo "Agendamento confirmado em $(date -u)"

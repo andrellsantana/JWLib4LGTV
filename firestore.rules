@@ -1,0 +1,16 @@
+rules_version = '2';
+// Cópias de segurança do JW Vídeos: cada documento é lido e gravado por quem
+// conhece o código de 6 caracteres. Não é possível listar nem apagar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /backups/{code} {
+      allow get: if request.auth != null;
+      allow create, update: if request.auth != null
+        && code.matches('^[A-HJ-NP-Z2-9]{6}$')
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 200000;
+      allow list, delete: if false;
+    }
+  }
+}

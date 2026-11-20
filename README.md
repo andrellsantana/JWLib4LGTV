@@ -43,8 +43,9 @@ Você vai precisar de:
 - uma conta Google (para a cópia de segurança);
 - acesso a este repositório no GitHub.
 
-São 6 partes. As partes 1 a 3 instalam o app. As partes 4 a 6 ligam a atualização
-automática, a cópia de segurança e a renovação automática do Developer Mode. Faça na ordem.
+São 6 partes. Faça na ordem: 1 e 2 preparam TV e Mac, 3 publica o app no GitHub Pages
+(a TV abre o app de lá), 4 instala na TV, 5 e 6 ligam a cópia de segurança e a renovação
+automática do Developer Mode.
 
 ## Parte 1 — Ativar o Developer Mode na TV
 
@@ -92,7 +93,19 @@ TV_IP=192.168.1.121 npm run tv:add
 npm run tv:key
 ```
 
-## Parte 3 — Instalar o app na TV
+## Parte 3 — Publicar o app (GitHub Pages)
+
+1. Junte as mudanças no ramo principal: no GitHub, abra o *pull request* do ramo de desenvolvimento e clique em **Merge**.
+2. No GitHub, abra o repositório → **Settings** → **Pages**.
+3. Em **Build and deployment** → **Source**, escolha **GitHub Actions**.
+4. Vá em **Actions** → **Publicar app (GitHub Pages)** → **Run workflow**.
+5. Quando ficar verde (cerca de 1 minuto), abra **https://andrellsantana.github.io/JWLib4LGTV/version.json** no navegador. Deve aparecer a versão.
+
+A partir daí, toda mudança no ramo principal é publicada sozinha, e a TV já abre a versão
+nova. Em **Ajustes**, no fim da tela, a versão aparece com "(online)". Sem internet, a TV
+usa a cópia que veio no pacote.
+
+## Parte 4 — Instalar o app na TV
 
 Com a TV ligada e o app Developer Mode aberto:
 
@@ -104,18 +117,6 @@ O comando gera o pacote, instala e abre o app. Ele passa a aparecer na barra de 
 TV (botão Home), com o ícone azul **JW Vídeos**, e pode ser arrastado para perto de Netflix e YouTube.
 
 Neste ponto o app já funciona por completo, exceto a cópia de segurança, que depende da Parte 5.
-
-## Parte 4 — Ligar a atualização automática (GitHub Pages)
-
-1. Junte as mudanças no ramo principal: no GitHub, abra o *pull request* do ramo de desenvolvimento e clique em **Merge**.
-2. No GitHub, abra o repositório → **Settings** → **Pages**.
-3. Em **Build and deployment** → **Source**, escolha **GitHub Actions**.
-4. Vá em **Actions** → **Publicar app (GitHub Pages)** → **Run workflow**.
-5. Quando ficar verde (cerca de 1 minuto), abra **https://andrellsantana.github.io/JWLib4LGTV/version.json** no navegador. Deve aparecer a versão.
-
-A partir daí, toda mudança no ramo principal é publicada sozinha. Ao abrir, a TV usa a
-última versão baixada e confere em segundo plano se há uma mais nova; a nova aparece na
-abertura seguinte. Em **Ajustes**, no fim da tela, a versão aparece com "(online)".
 
 ## Parte 5 — Ligar a cópia de segurança (Firebase)
 
@@ -130,7 +131,7 @@ abertura seguinte. Em **Ajustes**, no fim da tela, a versão aparece com "(onlin
    - nome `FIREBASE_API_KEY`, valor = o `apiKey`;
    - nome `FIREBASE_PROJECT_ID`, valor = o `projectId`.
 9. Vá em **Actions** → **Publicar app (GitHub Pages)** → **Run workflow**.
-10. Abra o app na TV duas vezes (a primeira baixa a versão nova; a segunda usa). Em **Ajustes** → **Cópia de segurança** aparece o seu código. **Anote-o.**
+10. Feche e abra o app na TV. Em **Ajustes** → **Cópia de segurança** aparece o seu código. **Anote-o.**
 
 > A `apiKey` do Firebase não é uma senha: ela só identifica o projeto. Quem protege os
 > dados são as regras do Firestore. Cada cópia só pode ser lida por quem tem o código, e
@@ -165,7 +166,7 @@ renovação falhar, o GitHub envia um e-mail. Nesse caso, gere o código de novo
 | O app sumiu da TV | A sessão do Developer Mode venceu. Reative-a no app Developer Mode, rode `npm run tv` e restaure seus dados com o código (Parte 5). |
 | A legenda não aparece | O vídeo pode não ter legenda nesse idioma. Tente outro idioma no botão Legendas. |
 | Mensagem "Não foi possível carregar os vídeos" | Verifique a internet da TV e use "Tentar novamente". |
-| A versão em Ajustes não mostra "(online)" | Confira a Parte 4. A versão nova aparece na segunda abertura depois de publicada. |
+| A versão em Ajustes não mostra "(online)" | Confira a Parte 3 e a internet da TV. |
 | A proteção de tela não mostra o tempo | Sem acesso ao serviço de previsão, ela mostra só o relógio. Tente mais tarde. |
 
 ---
@@ -192,15 +193,15 @@ Para testar a cópia de segurança localmente, crie `.env.local` com `VITE_FIREB
 | `src/nav` | Navegação espacial por controle remoto |
 | `src/ui` | Telas (Preact): início, categorias, detalhes, player, busca, Modo TV, Minha lista, Ajustes, proteção de tela |
 | `src/lib` | Preferências, legendas VTT, regras do Modo TV, timer, previsão do tempo, cópia de segurança |
-| `loader/index.html` | Carregador do pacote da TV: usa a versão do GitHub Pages ou a cópia embutida |
+| `loader/index.html` | Carregador do pacote da TV: abre a versão do GitHub Pages ou, sem internet, a cópia embutida |
 | `scripts/package.mjs` | Monta o pacote da TV e o site do GitHub Pages |
 | `webos/` | `appinfo.json`, ícones e tela de abertura |
 | `.github/workflows` | Publicação no GitHub Pages e renovação do Developer Mode |
 | `firestore.rules` | Regras de acesso da cópia de segurança |
 
 O app é compilado como um único script clássico, compatível com o Chromium 68 do webOS 5.
-O carregador injeta esse script como texto, então ele continua rodando a partir da pasta
-local da TV. O `appinfo.json` declara `requiredACG: []`, como a LG exige a partir de 2027:
+O carregador abre a versão hospedada em https (a API do JW.org não aceita pedidos de
+páginas locais). O `appinfo.json` declara `requiredACG: []`, como a LG exige a partir de 2027:
 o app não usa APIs internas da TV.
 
 Os vídeos, imagens e textos pertencem ao JW.org; este app apenas os exibe a partir da API pública do site, para uso pessoal.

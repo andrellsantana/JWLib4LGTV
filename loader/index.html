@@ -11,73 +11,48 @@
 <script>
 /*
  * Carregador do JW Vídeos (RF16).
- * Abre a versão mais nova já baixada do GitHub Pages; se não houver, usa a
- * cópia que veio no pacote (pasta app/). Em segundo plano, verifica se há
- * versão nova e a guarda para a próxima abertura. O código é injetado como
- * texto, então o app continua rodando a partir da pasta local da TV.
+ * Abre a versão publicada no GitHub Pages (sempre a mais nova, e com endereço
+ * https, aceito pela API do JW.org). Sem internet ou sem publicação, usa a
+ * cópia que veio no pacote (pasta app/).
  */
 (function () {
   var REMOTE = '__REMOTE__'; // ex.: https://usuario.github.io/repositorio/
-  var KEY = 'jwlv.remoteApp';
   var BUNDLED = 'app/';
+  var done = false;
 
-  function absolutize(css, base) {
-    return css.replace(/url\((['"]?)\.?\/?(assets\/[^)'"]+)\1\)/g, function (_m, q, path) {
-      return 'url(' + q + base + path + q + ')';
-    });
-  }
-  function inject(code, base) {
-    var style = document.createElement('style');
-    style.textContent = absolutize(code.css, base);
-    document.head.appendChild(style);
-    var script = document.createElement('script');
-    script.text = code.js;
-    document.body.appendChild(script);
-  }
-  function get(url, cb) {
-    var x = new XMLHttpRequest();
-    x.open('GET', url + (url.indexOf('?') < 0 ? '?' : '&') + 't=' + Date.now());
-    x.timeout = 15000;
-    x.onload = function () { cb(x.status >= 200 && x.status < 300 ? x.responseText : null); };
-    x.onerror = x.ontimeout = function () { cb(null); };
-    x.send();
-  }
   function bundled() {
-    get(BUNDLED + 'app.css', function (css) {
-      get(BUNDLED + 'app.js', function (js) {
-        if (js) inject({ css: css || '', js: js }, BUNDLED);
-      });
-    });
-  }
-  function cached() {
-    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
-  }
-  function checkForUpdate(current) {
-    if (REMOTE.indexOf('http') !== 0) return;
-    get(REMOTE + 'version.json', function (txt) {
-      var info;
-      try { info = JSON.parse(txt); } catch (e) { return; }
-      if (!info || (current && current.version === info.version)) return;
-      get(REMOTE + 'app.js', function (js) {
-        if (!js) return;
-        get(REMOTE + 'app.css', function (css) {
-          if (css === null) return;
-          try {
-            localStorage.setItem(KEY, JSON.stringify({ version: info.version, js: js, css: css }));
-          } catch (e) { /* sem espaço: segue com a versão atual */ }
-        });
-      });
-    });
+    if (done) return;
+    done = true;
+    window.__JWLV_VERSION__ = 'pacote';
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = BUNDLED + 'app.css';
+    document.head.appendChild(link);
+    var script = document.createElement('script');
+    script.src = BUNDLED + 'app.js';
+    document.body.appendChild(script);
+    setTimeout(function () {
+      if (document.getElementById('stage')) return;
+      document.getElementById('app').innerHTML =
+        '<div style="color:#eef2f6;font:32px sans-serif;padding:200px 160px;line-height:1.5">' +
+        'O JW Vídeos não conseguiu abrir.<br>Verifique a internet da TV, feche o app e abra de novo.</div>';
+    }, 20000);
   }
 
-  var c = cached();
-  window.__JWLV_VERSION__ = c ? c.version + ' (online)' : 'pacote';
-  if (c && c.js) {
-    try { inject(c, REMOTE); } catch (e) { localStorage.removeItem(KEY); bundled(); }
-  } else {
-    bundled();
-  }
-  checkForUpdate(c);
+  if (REMOTE.indexOf('http') !== 0) return bundled();
+  var x = new XMLHttpRequest();
+  x.open('GET', REMOTE + 'version.json?t=' + Date.now());
+  x.timeout = 6000;
+  x.onload = function () {
+    var info = null;
+    try { info = JSON.parse(x.responseText); } catch (e) {}
+    if (x.status === 200 && info && info.version && !done) {
+      done = true;
+      location.replace(REMOTE + 'index.html?v=' + encodeURIComponent(info.version));
+    } else bundled();
+  };
+  x.onerror = x.ontimeout = bundled;
+  x.send();
 })();
 </script>
 </body>

@@ -18,5 +18,12 @@ function fit() {
 }
 window.addEventListener('resize', fit);
 
+/* Versão mostrada em Ajustes: online (GitHub Pages) ou cópia do pacote. */
+const w = window as unknown as { __JWLV_VERSION__?: string };
+if (!w.__JWLV_VERSION__) {
+  const v = new URLSearchParams(location.search).get('v');
+  w.__JWLV_VERSION__ = v ? `${v} (online)` : 'local';
+}
+
 render(<App />, document.getElementById('app')!);
 fit();

@@ -76,7 +76,7 @@ export function Settings({ notify }: { notify: (m: string) => void }) {
             Apagar favoritos e histórico
           </button>
         </div>
-        <p class="note">Versão 0.2 · vídeos do JW.org</p>
+        <p class="note">Versão 0.3 · vídeos do JW.org</p>
       </section>
     </div>
   );

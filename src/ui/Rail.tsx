@@ -1,6 +1,6 @@
 import type { JSX } from 'preact';
 
-export type Section = 'home' | 'categories' | 'favorites' | 'settings';
+export type Section = 'home' | 'search' | 'categories' | 'tv' | 'favorites' | 'settings';
 
 const ICONS: Record<Section, JSX.Element> = {
   home: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
@@ -12,6 +12,18 @@ const ICONS: Record<Section, JSX.Element> = {
       <rect x="14" y="14" width="7" height="7" rx="1" />
     </g>
   ),
+  search: (
+    <g>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-4-4" />
+    </g>
+  ),
+  tv: (
+    <g>
+      <rect x="3" y="6" width="18" height="13" rx="2" />
+      <path d="M8 2l4 4 4-4" />
+    </g>
+  ),
   favorites: <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />,
   settings: (
     <g>
@@ -20,7 +32,14 @@ const ICONS: Record<Section, JSX.Element> = {
     </g>
   ),
 };
-const LABELS: Record<Section, string> = { home: 'Início', categories: 'Categorias', favorites: 'Minha lista', settings: 'Ajustes' };
+const LABELS: Record<Section, string> = {
+  home: 'Início',
+  search: 'Busca',
+  categories: 'Categorias',
+  tv: 'Modo TV',
+  favorites: 'Minha lista',
+  settings: 'Ajustes',
+};
 
 export function Rail({ active, onGo }: { active: Section; onGo: (s: Section) => void }) {
   return (

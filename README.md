@@ -5,7 +5,7 @@ App para TVs LG com webOS que lista e reproduz os vídeos do JW.org, em portugu�
 
 > Em construção. O passo a passo completo de instalação na TV será escrito ao final do projeto.
 
-## Estado atual (etapa 2 de 5)
+## Estado atual (etapa 3 de 5)
 
 - Catálogo de vídeos lido da API pública do JW.org (todas as categorias, Novidades dos últimos 30 dias)
 - Tela inicial: destaque, Novidades, "De Nosso Estúdio", uma fileira por categoria
@@ -15,6 +15,11 @@ App para TVs LG com webOS que lista e reproduz os vídeos do JW.org, em portugu�
 - Player: pausa, avançar/voltar 10 s, botões de mídia do controle, qualidade (padrão 720p), legendas em vários idiomas com tamanho ajustável, troca do idioma do vídeo
 - Minha lista: Favoritos e Continuar assistindo (segure OK sobre um vídeo para remover)
 - Ao abrir, oferece continuar o último vídeo interrompido
+- Busca por título e descrição, sem diferenciar acentos, com teclado na tela
+- Modo TV: programação contínua alternando categorias (1 a cada 4 de Músicas, 1 longo a cada 15 curtos, novidades primeiro); ↑↓ troca de canal, → pula
+- Timer para desligar: 30 min, 1 h, 2 h ou ao fim do vídeo
+- Aviso de vídeos novos desde a última visita
+- Proteção de tela após 5 min parado: relógio e previsão do tempo do Rio de Janeiro (Open-Meteo)
 - Ajustes: qualidade, legendas, tamanho da legenda, idioma, fundo de tela (imagem, trocar, remover)
 
 ## Desenvolvimento

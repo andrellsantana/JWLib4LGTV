@@ -17,6 +17,12 @@ interface Props {
   notify: (msg: string) => void;
   /** Botões extras na barra (ex.: timer, na etapa 3). */
   extra?: ComponentChildren;
+  /** Modo TV: teclas com a barra escondida (↑↓ canal, → próximo). Retorna true se tratou. */
+  onHiddenKey?: (keyCode: number) => boolean;
+  /** Começa com a barra escondida (Modo TV). */
+  startHidden?: boolean;
+  /** Conteúdo sobreposto (faixa do Modo TV). */
+  overlay?: ComponentChildren;
 }
 
 const HIDE_AFTER = 5000;
@@ -39,7 +45,9 @@ async function loadCues(url: string | undefined): Promise<Cue[] | null> {
   }
 }
 
-export function Player({ video, startAt, onClose, onEnded, notify, extra }: Props) {
+export function Player({ video, startAt, onClose, onEnded, notify, extra, onHiddenKey, startHidden, overlay }: Props) {
+  const hiddenKey = useRef(onHiddenKey);
+  hiddenKey.current = onHiddenKey;
   const ref = useRef<HTMLVideoElement>(null);
   const [current, setCurrent] = useState<Video>(video); // versão no idioma escolhido
   const [lang, setLang] = useState(getSettings().audioLang);
@@ -50,7 +58,7 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
   const [t, setT] = useState(startAt);
   const [dur, setDur] = useState(video.duration);
   const [playing, setPlaying] = useState(true);
-  const [controls, setControls] = useState(true);
+  const [controls, setControls] = useState(!startHidden);
   const [menu, setMenu] = useState<Menu>(null);
   const [error, setError] = useState('');
   const resumeAt = useRef(startAt);
@@ -127,9 +135,9 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
     }, HIDE_AFTER);
   }, []);
   useEffect(() => {
-    poke();
+    if (!startHidden) poke();
     return () => window.clearTimeout(hideTimer.current);
-  }, [poke]);
+  }, [poke, startHidden]);
 
   /* Progresso salvo a cada 5 s e ao sair. */
   useEffect(() => {
@@ -160,6 +168,7 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
   /* Teclas do player: têm prioridade sobre a navegação geral. */
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
+      if (document.querySelector('.dialog-bg')) return; // diálogo do app por cima (ex.: timer)
       const k = ev.keyCode;
       const isBack = k === KEY.BACK_WEBOS || k === KEY.ESC || k === KEY.BACKSPACE;
       let handled = true;
@@ -177,6 +186,8 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
           ui.current.controls = false;
           setControls(false);
         } else onClose();
+      } else if (!ui.current.controls && hiddenKey.current && hiddenKey.current(k)) {
+        /* tratado pelo Modo TV */
       } else if (!ui.current.controls) {
         if (k === KEY.LEFT) seek(-SEEK);
         else if (k === KEY.RIGHT) seek(SEEK);
@@ -193,6 +204,7 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
     };
     let swallowOk = false;
     const onKeyUp = (ev: KeyboardEvent) => {
+      if (document.querySelector('.dialog-bg')) return;
       if (ev.keyCode === KEY.OK && swallowOk) {
         swallowOk = false;
         ev.stopImmediatePropagation();
@@ -249,6 +261,7 @@ export function Player({ video, startAt, onClose, onEnded, notify, extra }: Prop
         </div>
       ) : null}
       {error ? <div class="status">{error}</div> : null}
+      {overlay}
       <div class={'pctl' + (controls ? '' : ' hidden')}>
         <div class="ptitle">{current.title}</div>
         <div class="bar">

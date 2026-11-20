@@ -11,6 +11,9 @@ import {
   type SubSize,
 } from '../lib/prefs';
 import { Row } from './Row';
+import { useState } from 'preact/hooks';
+import { backupEnabled, getCode, lastBackupAt, restore, upload, validCode } from '../lib/backup';
+import { formatDate } from '../lib/text';
 
 type Find = (id: string) => Video | undefined;
 type Open = (v: Video) => void;
@@ -69,6 +72,7 @@ export function Settings({ notify }: { notify: (m: string) => void }) {
           notify(v === 'off' ? 'Fundo removido' : v === 'rand' ? 'Novo fundo aplicado' : 'Imagem padrão aplicada');
         }}
       />
+      <Backup notify={notify} />
       <section data-block>
         <h3>Dados</h3>
         <div class="seg">
@@ -76,8 +80,73 @@ export function Settings({ notify }: { notify: (m: string) => void }) {
             Apagar favoritos e histórico
           </button>
         </div>
-        <p class="note">Versão 0.3 · vídeos do JW.org</p>
+        <p class="note">Versão {(window as unknown as { __JWLV_VERSION__?: string }).__JWLV_VERSION__ || 'local'} · vídeos do JW.org</p>
       </section>
     </div>
+  );
+}
+
+const CODE_KEYS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'.split('');
+
+/** Cópia de segurança (RF17): mostra o código e permite restaurar com outro. */
+function Backup({ notify }: { notify: (m: string) => void }) {
+  const [typing, setTyping] = useState(false);
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  if (!backupEnabled()) {
+    return (
+      <section data-block>
+        <h3>Cópia de segurança</h3>
+        <p class="note">Ainda não configurada (Firebase). Veja o README.</p>
+      </section>
+    );
+  }
+  const at = lastBackupAt();
+  const doRestore = async () => {
+    if (!validCode(code)) return notify('O código tem 6 caracteres');
+    setBusy(true);
+    const r = await restore(code);
+    setBusy(false);
+    if (r === 'ok') {
+      setTyping(false);
+      notify('Favoritos, progresso e ajustes restaurados');
+    } else notify(r === 'not-found' ? 'Nenhuma cópia com esse código' : 'Sem conexão com a cópia de segurança');
+  };
+  return (
+    <section data-block>
+      <h3>Cópia de segurança</h3>
+      <p class="note">
+        Seu código: <b class="code">{getCode()}</b>
+        {at ? ` · última cópia em ${formatDate(at)} às ${at.slice(11, 16)} (UTC)` : ''}. Anote-o: ele restaura seus dados após reinstalar o app.
+      </p>
+      <div class="seg" style={{ marginTop: 14 }}>
+        <button class="btn" data-f="bk:now" onClick={async () => notify((await upload()) ? 'Cópia feita' : 'Não foi possível copiar agora')}>
+          Copiar agora
+        </button>
+        <button class="btn" data-f="bk:restore" onClick={() => (setTyping(!typing), setCode(''))}>
+          Restaurar com código
+        </button>
+      </div>
+      {typing ? (
+        <div>
+          <div class="sbox" style={{ width: 420 }}>
+            {code || <span class="ph">Digite o código</span>}
+          </div>
+          <div class="kb wide8">
+            {CODE_KEYS.map((k) => (
+              <div key={k} class="key" data-f={`ck:${k}`} onClick={() => setCode((c) => (c.length < 6 ? c + k : c))}>
+                {k}
+              </div>
+            ))}
+            <div class="key wide" data-f="ck:del" onClick={() => setCode((c) => c.slice(0, -1))}>
+              Apagar
+            </div>
+            <div class="key wide" data-f="ck:ok" onClick={busy ? undefined : doRestore}>
+              {busy ? 'Aguarde…' : 'Restaurar'}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </section>
   );
 }

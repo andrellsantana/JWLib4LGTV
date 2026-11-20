@@ -22,6 +22,7 @@ import { TvMode } from './ui/TvMode';
 import { getTimer, remainingMs, setTimer, timerLabel, type TimerMode } from './lib/timer';
 import { load, save } from './lib/storage';
 import { newest } from './lib/text';
+import { startAutoBackup } from './lib/backup';
 
 type Route =
   | { name: Section }
@@ -135,6 +136,9 @@ export function App() {
   useLayoutEffect(() => {
     restoreFocus();
   });
+
+  /* Cópia de segurança automática (Firebase), se configurada. */
+  useEffect(() => startAutoBackup(), []);
 
   /* Proteção de tela: qualquer tecla ou movimento a fecha (e é ignorado). */
   useEffect(() => {

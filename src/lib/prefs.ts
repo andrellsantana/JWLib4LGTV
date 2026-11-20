@@ -102,3 +102,32 @@ export function clearAll() {
   save('favorites', favorites);
   changed('progress', progress);
 }
+
+/* ---------- cópia de segurança (RF17) ---------- */
+export interface Snapshot {
+  settings: Settings;
+  favorites: string[];
+  progress: Record<string, Progress>;
+  lastPlayed: string | null;
+}
+
+export function exportData(): Snapshot {
+  return { settings, favorites, progress, lastPlayed };
+}
+
+export function importData(s: Snapshot) {
+  settings = { ...DEFAULTS, ...(s.settings || {}) };
+  favorites = Array.isArray(s.favorites) ? s.favorites : [];
+  progress = s.progress || {};
+  lastPlayed = s.lastPlayed || null;
+  save('settings', settings);
+  save('favorites', favorites);
+  save('lastPlayed', lastPlayed);
+  changed('progress', progress);
+}
+
+/** Avisa a cada mudança (para a cópia automática). */
+export function onPrefsChange(fn: () => void): () => void {
+  window.addEventListener(EVENT, fn);
+  return () => window.removeEventListener(EVENT, fn);
+}

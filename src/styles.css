@@ -748,3 +748,13 @@ body {
   font-size: 18px;
   color: var(--muted);
 }
+.kb.wide8 {
+  grid-template-columns: repeat(8, 78px);
+  margin-top: 10px;
+}
+.code {
+  color: var(--text);
+  font-family: var(--display);
+  letter-spacing: 0.16em;
+  font-size: 26px;
+}

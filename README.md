@@ -147,13 +147,41 @@ Neste ponto o app já funciona por completo, exceto a cópia de segurança, que 
 cd ~/JWLib4LGTV && npm run tv:token
 ```
 
-2. Aparece um código longo, de letras e números. Copie-o inteiro.
+2. Aparece um código de 64 letras e números. Copie-o inteiro.
 3. No GitHub: **Settings** → **Secrets and variables** → **Actions** → **New repository secret** → nome `LG_DEV_SESSION_TOKEN`, valor = o código copiado.
 4. Vá em **Actions** → **Renovar Developer Mode da TV** → **Run workflow**. Ele deve ficar verde, e no app Developer Mode da TV o tempo restante volta para perto de 1000 horas.
 
 A partir daí, o GitHub renova a sessão a cada 12 horas. Uma vez por mês, ele também
 reativa o próprio agendamento, para não ser desligado por falta de atividade. Se a
 renovação falhar, o GitHub envia um e-mail. Nesse caso, gere o código de novo (passos 1 a 3).
+
+---
+
+## Depois de instalado: guarde estas informações
+
+| O quê | Para que serve | Onde encontrar |
+|---|---|---|
+| **Código da cópia de segurança** (6 caracteres) | Recuperar favoritos, progresso e ajustes se o app for reinstalado | Na TV: **Ajustes** → **Cópia de segurança** → "Seu código" |
+| **IP da TV** | Reinstalar ou atualizar o app pelo Mac | Na TV: app **Developer Mode** |
+
+### Se precisar reinstalar o app
+
+1. Instale de novo pelo Mac (Parte 4): `cd ~/JWLib4LGTV && npm run tv`.
+2. Na TV, abra o app → **Ajustes** → **Cópia de segurança** → **Restaurar com código**.
+3. Digite o seu código de 6 caracteres e escolha **Restaurar**.
+4. Favoritos, Continuar assistindo e ajustes voltam como estavam na última cópia.
+
+A cópia é feita sozinha cerca de 10 segundos depois de cada mudança. Para forçar uma cópia, use **Copiar agora**.
+
+### Se o IP da TV mudar
+
+```bash
+cd ~/JWLib4LGTV && TV_IP=novo-ip npm run tv:add
+```
+
+### Se o GitHub avisar por e-mail que a renovação falhou
+
+A TV provavelmente gerou um código de sessão novo. Repita a Parte 6.
 
 ---
 

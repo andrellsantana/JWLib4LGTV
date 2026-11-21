@@ -157,6 +157,34 @@ renovação falhar, o GitHub envia um e-mail. Nesse caso, gere o código de novo
 
 ---
 
+## Depois de instalado: guarde estas informações
+
+| O quê | Para que serve | Onde encontrar |
+|---|---|---|
+| **Código da cópia de segurança** (6 caracteres) | Recuperar favoritos, progresso e ajustes se o app for reinstalado | Na TV: **Ajustes** → **Cópia de segurança** → "Seu código" |
+| **IP da TV** | Reinstalar ou atualizar o app pelo Mac | Na TV: app **Developer Mode** |
+
+### Se precisar reinstalar o app
+
+1. Instale de novo pelo Mac (Parte 4): `cd ~/JWLib4LGTV && npm run tv`.
+2. Na TV, abra o app → **Ajustes** → **Cópia de segurança** → **Restaurar com código**.
+3. Digite o seu código de 6 caracteres e escolha **Restaurar**.
+4. Favoritos, Continuar assistindo e ajustes voltam como estavam na última cópia.
+
+A cópia é feita sozinha cerca de 10 segundos depois de cada mudança. Para forçar uma cópia, use **Copiar agora**.
+
+### Se o IP da TV mudar
+
+```bash
+cd ~/JWLib4LGTV && TV_IP=novo-ip npm run tv:add
+```
+
+### Se o GitHub avisar por e-mail que a renovação falhou
+
+A TV provavelmente gerou um código de sessão novo. Repita a Parte 6.
+
+---
+
 ## Problemas comuns
 
 | Problema | O que fazer |

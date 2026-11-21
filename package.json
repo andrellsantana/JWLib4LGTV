@@ -12,7 +12,7 @@
     "tv:add": "ares-setup-device --add tv -i \"{'host':'$TV_IP','port':'9922','username':'prisoner'}\"",
     "tv:key": "ares-novacom --device tv --getkey",
     "tv": "npm run build && rm -rf ipk && ares-package dist/tv -o ipk && ares-install --device tv ipk/*.ipk && ares-launch --device tv com.jwlv4lgtvwebos.app",
-    "tv:token": "ares-novacom --device tv --run \"cat /var/luna/preferences/devmode_enabled\""
+    "tv:token": "ares-novacom --device tv --run \"cat /var/luna/preferences/devmode_enabled; echo\""
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.0",

@@ -147,7 +147,7 @@ Neste ponto o app já funciona por completo, exceto a cópia de segurança, que 
 cd ~/JWLib4LGTV && npm run tv:token
 ```
 
-2. Aparece um código longo, de letras e números. Copie-o inteiro.
+2. Aparece um código de 64 letras e números. Copie-o inteiro.
 3. No GitHub: **Settings** → **Secrets and variables** → **Actions** → **New repository secret** → nome `LG_DEV_SESSION_TOKEN`, valor = o código copiado.
 4. Vá em **Actions** → **Renovar Developer Mode da TV** → **Run workflow**. Ele deve ficar verde, e no app Developer Mode da TV o tempo restante volta para perto de 1000 horas.
 
